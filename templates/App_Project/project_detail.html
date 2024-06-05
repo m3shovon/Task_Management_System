@@ -1,0 +1,212 @@
+{% extends 'layouts/base.html' %} 
+{% load crispy_forms_tags %} 
+{% block span_block %} 
+{{ project.name }} 
+{% endblock span_block %} 
+
+
+{% block css_block %}
+<style>
+  .countdown-container {
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        #countdown {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            color: #0866C6;
+        }
+</style>
+{% endblock css_block %}
+  
+
+{% block body_block %}
+
+<div class="row mg-b-50">
+  <div class="col-xl-6">
+    <div class="card pd-20 pd-sm-40">
+      <h2 class="">Project Name: <span class="text-primary"> {{ project.name }}</span></h2> 
+      <p>Description: {{ project.description }}</p>
+      <p>Start Date: {{ project.start_date }}</p>
+      <p>End Date: {{ project.end_date }}</p>
+      <p>Project Manager: {{ project.manager|capfirst  }}</p>
+      <button class="btn-lg btn-primary"><a class="text-white" href="{% url 'App_Project:create_task' project.pk %}">Create A Task</a></button>
+    </div>
+  </div>
+  <div class="col-xl-6">
+    <div class="row">
+      <div class="col-xl-12">
+        <div class="card pd-20 pd-sm-40">
+          <h2 class="text-danger">Deadline</h2>
+          <div class="countdown-container">
+            
+            <div id="countdown"></div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- TASK STATUS -->
+<div class="row row-sm mg-t-20">
+  <div class="col-sm-6 col-xl-3">
+    <div class="card pd-20 pd-sm-25 bg-primary">
+      <div class="d-flex align-items-center justify-content-between mg-b-10">
+        <h6 class="card-body-title tx-12 tx-white-8 tx-spacing-1">Assigned Task</h6>
+        <a href="{% url 'App_Project:tasks_by_status' 'ASSIGNED' %}" class="btn btn-lg tx-white hover-warning"
+        ><i class="fa fa-compass"></i
+        ></a>
+      </div>
+      <!-- d-flex -->
+      <h2 class="tx-white tx-lato tx-center mg-b-15">{{ assigned_count }}</h2>
+      <p class="mg-b-0 tx-12 tx-white"><span class="tx-success"></span> Date</p>
+    </div>
+    <!-- card -->
+  </div>
+  <!-- col-3 -->
+  <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0">
+    <div class="card bg-purple tx-white pd-25">
+      <div class="d-flex align-items-center justify-content-between mg-b-10">
+        <h6 class="card-body-title tx-12 tx-white-8 tx-spacing-1">
+          Working Task
+        </h6>
+        <a href="{% url 'App_Project:tasks_by_status' 'WORKING' %}" class="btn btn-lg tx-white hover-warning"
+        ><i class="fa fa-compass"></i
+        ></a>
+      </div>
+      <!-- d-flex -->
+      <h2 class="tx-lato tx-center mg-b-15">{{working_count}}</h2>
+      <p class="mg-b-0 tx-12 op-8">Date</p>
+    </div>
+    <!-- card -->
+  </div>
+  <!-- col-3 -->
+  <div class="col-sm-6 col-xl-3 mg-t-20 mg-xl-t-0">
+    <div class="card pd-20 pd-sm-25 bg-danger">
+      <div class="d-flex align-items-center justify-content-between mg-b-10">
+        <h6 class="card-body-title tx-12 tx-spacing-1 tx-white">
+          Incomplete Task
+        </h6>
+        <a href="{% url 'App_Project:tasks_by_status' 'INCOMPLETED' %}" class="btn btn-lg tx-white hover-warning"
+          ><i class="fa fa-compass"></i
+        ></a>
+      </div>
+      <!-- d-flex -->
+      <h2 class="tx-white tx-lato tx-center mg-b-15">{{ incompleted_count }}</h2>
+      <p class="mg-b-0 tx-12 tx-white">
+        <span class="tx-danger">- 3.4%</span> Date
+      </p>
+    </div>
+    <!-- card -->
+  </div>
+  <!-- col-3 -->
+  <div class="col-sm-6 col-xl-3 mg-t-10 mg-xl-t-0">
+    <div class="card bg-teal tx-white pd-25">
+      <div class="d-flex align-items-center justify-content-between mg-b-10">
+        <h6 class="card-body-title tx-12 tx-white-8 tx-spacing-1">
+          Completed Task
+        </h6>
+        <a href="{% url 'App_Project:tasks_by_status' 'COMPLETED' %}" class="btn btn-lg tx-white hover-warning"
+        ><i class="fa fa-compass"></i
+        ></a>
+      </div>
+      <h2 class="tx-lato tx-center mg-b-15">{{completed_count}}</h2>
+      <p class="mg-b-0 tx-12 op-8">+ 6.2% compared last month</p>
+    </div>
+  </div>
+</div>
+
+
+<div class="row row-sm mg-t-20">
+  {% for task in project.tasks.all %}
+  <div class="col-md-6 col-xl-4 mg-t-20 mg-xl-t-0">
+    <div class="card pd-20 pd-sm-25 bg-sl-primary">
+      <div class="d-flex justify-content-between align-items-center mg-b-15">
+        <h3 class="card-body-title tx-white mg-b-5">{{ task.name }}</h3> 
+        <button class="btn btn-sm bg-secondary"><a class="text-white" href="{% url 'App_Project:task_details' task_id=task.id %}">View Task</a></button>
+
+        <p class="tx-13 mg-b-0">{{ task.start_date }} To {{ task.end_date }}</p>
+      </div>
+      <div class="bg-black-2 text-white">
+        <div id="rickshaw3" class="wd-100p ht-100 text-white">
+         
+          <h2></h2>
+          <p>{{ task.description }}</p>
+        </div>
+        <hr>
+        <div class="row mg-b-6">
+          <div class="col-sm-6">
+            {% for employee in task.assigned_to.all %}
+             Assigned To: {{ employee.user.username|capfirst }}
+            {% endfor %}   
+          </div>
+          <div class="col-sm-6">
+            Status: {{ task.status }}
+          </div>
+        </div>  
+      </div>
+     <button class="btn-sm btn-warning"><a class="text-white" href="{% url 'App_Project:edit_task' pk=task.pk %}">Update Task</a></button>
+    </div>
+  </div>
+  {% endfor %}
+  <!-- <div class="col-md-6 col-xl-4 mg-t-20 mg-xl-t-0">
+    <div class="card pd-20 pd-sm-25 bg-sl-primary">
+      <div class="d-flex justify-content-between align-items-center mg-b-15">
+        <h6 class="card-body-title tx-white tx-12 mg-b-5">Task</h6>
+        <p class="tx-13 mg-b-0">Start Date To End Date</p>
+      </div>
+      <div class="bg-black-2">
+        <div id="rickshaw3" class="wd-100p ht-100"></div>
+      </div>
+      <div class="row no-gutters mg-t-1">
+        {% if tasks %}
+        <ul>
+          {% for task in tasks %}
+          <li>
+            <a href="#">{{ task.name }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>No tasks found for this project.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div> -->
+
+</div>
+
+
+
+<script>
+  // Countdown Timer
+  var countdownElement = document.getElementById('countdown');
+  var startDate = new Date('{{ project.start_date }}');
+  var endDate = new Date('{{ project.end_date }}');
+
+  function updateCountdown() {
+      var currentDate = new Date();
+      var remainingTime = endDate - currentDate;
+
+      if (remainingTime <= 0) {
+          countdownElement.innerHTML = "Countdown Finished!";
+          return;
+      }
+
+      var days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+      countdownElement.innerHTML = days + " days, " + hours + " hours, " + minutes + " minutes, " + seconds + " seconds";
+
+      setTimeout(updateCountdown, 1000);
+  }
+
+  updateCountdown();
+</script>
+
+{% endblock body_block %}
